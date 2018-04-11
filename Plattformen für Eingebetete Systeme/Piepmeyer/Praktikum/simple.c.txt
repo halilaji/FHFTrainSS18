@@ -1,0 +1,110 @@
+/* Necessary includes for device drivers */
+#include <linux/init.h>
+#include <linux/module.h>
+#include <linux/kernel.h> /* printk() */
+#include <linux/slab.h> /* kmalloc() */
+#include <linux/fs.h> /* everything... */
+#include <linux/errno.h> /* error codes */
+#include <linux/types.h> /* size_t */
+#include <linux/delay.h> 
+#include <linux/proc_fs.h>
+#include <linux/fcntl.h> /* O_ACCMODE */
+#include <asm/uaccess.h> /* copy_from/to_user */
+
+MODULE_LICENSE("Dual BSD/GPL");
+
+/* Declaration of simple.c functions */
+int simple_open(struct inode *inode, struct file *filp);
+int simple_release(struct inode *inode, struct file *filp);
+ssize_t simple_read(struct file *filp, char *buf, size_t count, loff_t *f_pos);
+ssize_t simple_write(struct file *filp, const char *buf, size_t count, loff_t *f_pos);
+void simple_exit(void);
+int simple_init(void);
+
+/* Structure that declares the usual file */
+/* access functions */
+struct file_operations simple_fops = {
+  .read = simple_read,
+  .write = simple_write,
+  .open = simple_open,
+  .release = simple_release
+};
+
+/* Declaration of the init and exit functions */
+module_init(simple_init);
+module_exit(simple_exit);
+
+/* Global variables of the driver */
+/* Major number */
+int simple_major = 42;
+/* Buffer to store data */
+char *the_char;
+
+int simple_init(void) {
+  /* Register character device */
+  int result = register_chrdev(simple_major, "simple", &simple_fops);
+  if (result < 0) {
+    printk(
+      "module simple: cannot obtain major number %d\n", simple_major);
+    return result;
+  }
+
+  /* Allocate as single char */
+  the_char = kmalloc(1, GFP_KERNEL); 
+  if (!the_char) { 
+    result = -ENOMEM;
+    goto fail; 
+  } 
+  memset(the_char, 0, 1);
+
+  printk("module simple: inserting module\n"); 
+  return 0;
+
+  fail: 
+    simple_exit(); 
+    return result;
+}
+
+void simple_exit(void) {
+  /* Freeing the major number */
+  unregister_chrdev(simple_major, "simple");
+
+  /* Freeing buffer memory */
+  if (the_char) {
+    kfree(the_char);
+  }
+
+  printk("module simple: removing module\n");
+}
+
+int simple_open(struct inode *inode, struct file *filp) {
+  /* always success */
+  return 0;
+}
+
+int simple_release(struct inode *inode, struct file *filp) {
+  /* always success */
+  return 0;
+}
+
+ssize_t simple_read(struct file *filp, char *user_data, 
+                    size_t count, loff_t *offset) { 
+  /* Transfering data to user space */ 
+  if (*offset == 0) { 
+    // pass character to user space
+    copy_to_user(user_data,the_char,1);
+    *offset=1; 
+	return 1; 
+  } else { 
+    // character already read
+    return 0; 
+  }
+}
+
+ssize_t simple_write( struct file *filp, const char *user_data,
+                      size_t count, loff_t *offset) {
+  // get last character from input
+  const char* lastChar=user_data+count-1;
+  copy_from_user(the_char,lastChar,1);
+  return 1;
+}
