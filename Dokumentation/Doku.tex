@@ -1,0 +1,80 @@
+\documentclass [a4paper,10pt] {article}
+
+\usepackage{graphicx}
+\usepackage{german}
+\usepackage{titlesec}
+\usepackage{standalone}
+\usepackage{hyperref}
+\usepackage[utf8]{inputenc}
+
+\titleformat*{\section}{\LARGE \bfseries}
+\titleformat*{\subsection}{\Large \bfseries}
+
+\titlespacing*{\section}{0pt}{*4}{*2}
+\titlespacing*{\subsection}{0pt}{*4}{*1.5}
+
+\setlength{\parindent}{0pt}
+
+\begin {document}
+
+\begin{titlepage}
+	\raggedleft
+	\includegraphics[width=5cm]{HFULogo}\par\vspace{1cm}
+
+	\centering
+	\vfill
+
+	\LARGE FHF Train \par
+	\vspace{1cm}
+	
+	\Large Semesterprojekt 2018 \\
+	\vfill
+	
+	\Large Autoren: \\ 
+	Stephan Mosbach AIB 6 \\
+ 	Ilirian Halilaj AIB6 \\ 
+	Jonas Wiedle AIN6 \\ 
+	Kevin Junk AIN4 \\
+	Alexander Leibinger AIN6\par
+	
+	\vfill
+	Referent: Prof. Dr. Rainer M"uller\par
+
+	\vfill
+\end{titlepage}
+
+	\section*{Abstract}
+
+	\vspace{5mm}
+
+	This Project is presented by the University of Furtwangen.
+
+\newpage
+
+\tableofcontents
+
+\newpage
+	\section{Einleitung}
+	
+		Mit dieser Dokumentation wollen wir den Lesern das Vorgehen unserer Projektgruppe für das Semesterprojekt „FHFTrain“ n"aherbringen und einen Einblick in die 			
+		Problematik und die daraus resultierenden Ergebnisse im Rahmen des Projektes aus einer projektorganisatorischen und einer informationstechnischen Sicht darstellen. \par
+		Das Ziel unseres Projektes ist es ein Yocto Image von einem Server/Raspberry Pi über das Netzwerk automatisch auf den Zug geladen und ausgeführt werden.
+	
+\newpage
+	\include{Projektbeschreibung}
+\newpage
+	\section{Zeitplan}
+		\vfill
+\newpage
+	\include{DokuJonas}
+\newpage
+	\include{DokuAlex}
+\newpage
+	\include{Yocto}	
+
+
+\newpage
+	\include{Quellenverzeichnis}
+\end {document}
+
+
